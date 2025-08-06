@@ -8,6 +8,10 @@ let gameBoard = (function createGameBoard() {
     const board = Array(9).fill(START);
     let count = 0;
 
+    let clear = () => {
+        board.fill(START);
+    }
+
     let setCross = (i) => {
         board[i] = CROSS;
         ++count;
@@ -56,20 +60,29 @@ let gameBoard = (function createGameBoard() {
         console.log(board[6] + " " + board[7] + " " + board[8]);
     }
 
-    return { setCircle, setCross, checkOver, displayBoard };
+    let isValid = (i) => {
+        return i < 9 && i >= 0 && board[i] == START;
+    }
+
+    return { clear, setCircle, setCross, checkOver, displayBoard, isValid };
 })();
 
-gameBoard.displayBoard();
-gameBoard.setCircle(0);
-gameBoard.setCircle(1);
-gameBoard.setCircle(2);
-gameBoard.displayBoard();
-console.log(gameBoard.checkOver());
+// gameBoard.displayBoard();
+// gameBoard.setCircle(2);
+// gameBoard.setCircle(4);
+// gameBoard.setCircle(6);
+// gameBoard.displayBoard();
+// console.log(gameBoard.checkOver());
 
 
 function createPlayer(name) {
     let getName = () => name;
-    return { getName };
+
+    let getChoice = () => {
+        return prompt("Enter position (0-9, unfilled only):");
+    }
+
+    return { getName, getChoice };
 }
 
 let gameController = (function () {
@@ -79,11 +92,41 @@ let gameController = (function () {
     playerOne = createPlayer(firstPlayerName);
     playerTwo = createPlayer(secondPlayerName);
 
-    play = () => { console.log(playerOne.getName() + " " + playerTwo.getName()) };
+    gameBoard.displayBoard();
 
-    let display = () => {
-        
-    }
+    play = () => { 
+        while (true) {
+            let playerOneChoice = playerOne.getChoice();
+            while (!gameBoard.isValid(playerOneChoice)) {
+                console.log("Invalid position, try again");
+                playerOneChoice = playerOneChoice.getChoice();
+            }
+
+            gameBoard.setCircle(playerOneChoice);
+            gameBoard.displayBoard();
+
+            if (gameBoard.checkOver()) {
+                console.log(playerOne.getName() + " wins");
+                break;
+            }
+
+            let playerTwoChoice = playerTwo.getChoice();
+            while (!gameBoard.isValid(playerTwoChoice)) {
+                console.log("Invalid position, try again");
+                playerTwoChoice = playerTwoChoice.getChoice();
+            }
+            gameBoard.setCross(playerTwoChoice);
+            gameBoard.displayBoard();
+
+            if (gameBoard.checkOver()) {
+                console.log(playerTwo.getName() + " wins");
+                break;
+            }
+        }
+    };
+
+
+
     return { play };
 })();
 
