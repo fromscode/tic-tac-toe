@@ -1,23 +1,21 @@
-const START = 0;
-const CROSS = 1;
-const CIRCLE = 2;
+const START = "-";
+const CROSS = "X";
+const CIRCLE = "O";
 
 console.log("test");
 
-let gameboard = (function createGameBoard() {
+let gameBoard = (function createGameBoard() {
     const board = Array(9).fill(START);
     let count = 0;
 
-    let increaseCount = () => ++count;
-
     let setCross = (i) => {
         board[i] = CROSS;
-        increaseCount();
+        ++count;
     }
 
     let setCircle = (i) => {
         board[i] = CIRCLE;
-        increaseCount();
+        ++count;
     }
 
     let checkOver = function () {
@@ -52,10 +50,21 @@ let gameboard = (function createGameBoard() {
         return false;
     }
 
-    return { setCircle, setCross, checkOver };
+    let displayBoard = () => {
+        console.log(board[0] + " " + board[1] + " " + board[2]);
+        console.log(board[3] + " " + board[4] + " " + board[5]);
+        console.log(board[6] + " " + board[7] + " " + board[8]);
+    }
+
+    return { setCircle, setCross, checkOver, displayBoard };
 })();
 
-console.log(gameboard.checkOver());
+gameBoard.displayBoard();
+gameBoard.setCircle(0);
+gameBoard.setCircle(1);
+gameBoard.setCircle(2);
+gameBoard.displayBoard();
+console.log(gameBoard.checkOver());
 
 
 function createPlayer(name) {
@@ -71,6 +80,10 @@ let gameController = (function () {
     playerTwo = createPlayer(secondPlayerName);
 
     play = () => { console.log(playerOne.getName() + " " + playerTwo.getName()) };
+
+    let display = () => {
+        
+    }
     return { play };
 })();
 
