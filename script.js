@@ -67,19 +67,11 @@ let gameBoard = (function createGameBoard() {
     return { clear, setCircle, setCross, checkOver, displayBoard, isValid };
 })();
 
-// gameBoard.displayBoard();
-// gameBoard.setCircle(2);
-// gameBoard.setCircle(4);
-// gameBoard.setCircle(6);
-// gameBoard.displayBoard();
-// console.log(gameBoard.checkOver());
-
-
 function createPlayer(name) {
     let getName = () => name;
 
     let getChoice = () => {
-        return prompt("Enter position (0-9, unfilled only):");
+        return prompt(name + ", Enter position (0-9, unfilled only):");
     }
 
     return { getName, getChoice };
@@ -99,7 +91,7 @@ let gameController = (function () {
             let playerOneChoice = playerOne.getChoice();
             while (!gameBoard.isValid(playerOneChoice)) {
                 console.log("Invalid position, try again");
-                playerOneChoice = playerOneChoice.getChoice();
+                playerOneChoice = playerOne.getChoice();
             }
 
             gameBoard.setCircle(playerOneChoice);
@@ -113,7 +105,7 @@ let gameController = (function () {
             let playerTwoChoice = playerTwo.getChoice();
             while (!gameBoard.isValid(playerTwoChoice)) {
                 console.log("Invalid position, try again");
-                playerTwoChoice = playerTwoChoice.getChoice();
+                playerTwoChoice = playerTwo.getChoice();
             }
             gameBoard.setCross(playerTwoChoice);
             gameBoard.displayBoard();
