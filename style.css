@@ -1,3 +1,29 @@
 *{
     color: red;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    align-items: center;
+}
+
+.board {
+    display: grid;
+    grid-template-rows: repeat(3, 150px);
+    grid-template-columns: repeat(3, 150px);
+    column-gap: 10px;
+    row-gap: 10px;
+}
+
+.cell {
+    background-color: lightgray;
+}
+
+.cell:hover {
+    opacity: 0.8;
+    border: 1px solid #000;
 }
