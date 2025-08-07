@@ -8,6 +8,8 @@ let gameBoard = (function createGameBoard() {
     const board = Array(9).fill(START);
     let count = 0;
 
+    let getCount = () => count;
+
     let clear = () => {
         board.fill(START);
     }
@@ -23,7 +25,12 @@ let gameBoard = (function createGameBoard() {
     }
 
     let checkOver = function () {
-        if (count == 8 || checkRows() ||checkColumns() || checkDiagonals()) return true;
+        if (count == 9 || checkRows() || checkColumns() || checkDiagonals()) return true;
+        return false;
+    }
+
+    let checkWin = function () {
+        if (checkRows() || checkColumns() || checkDiagonals()) return true;
         return false;
     }
 
@@ -55,6 +62,7 @@ let gameBoard = (function createGameBoard() {
     }
 
     let displayBoard = () => {
+        console.log("");
         console.log(board[0] + " " + board[1] + " " + board[2]);
         console.log(board[3] + " " + board[4] + " " + board[5]);
         console.log(board[6] + " " + board[7] + " " + board[8]);
@@ -64,7 +72,7 @@ let gameBoard = (function createGameBoard() {
         return i < 9 && i >= 0 && board[i] == START;
     }
 
-    return { clear, setCircle, setCross, checkOver, displayBoard, isValid };
+    return { clear, setCircle, setCross, displayBoard, isValid, getCount, checkWin };
 })();
 
 function createPlayer(name) {
@@ -78,41 +86,77 @@ function createPlayer(name) {
 }
 
 let gameController = (function () {
-    firstPlayerName = prompt("Enter player 1 name: ");
-    secondPlayerName = prompt("Enter player 2 name: ");
 
-    playerOne = createPlayer(firstPlayerName);
-    playerTwo = createPlayer(secondPlayerName);
+    let playerOne;
+    let playerTwo;
 
-    gameBoard.displayBoard();
+    let intializePlayers = () => {
+        firstPlayerName = prompt("Enter player 1 name: ");
+        if (firstPlayerName === "") {
+            console.log("Game exited");
+            return false;
+        }
+        secondPlayerName = prompt("Enter player 2 name: ");
+        if (secondPlayerName === "") {
+            console.log("Game exited");
+            return false;
+        }
 
-    play = () => { 
+        playerOne = createPlayer(firstPlayerName);
+        playerTwo = createPlayer(secondPlayerName);
+        return true;
+
+    }
+
+    let play = () => {
+        if(!intializePlayers()) return;
+        gameBoard.displayBoard();
         while (true) {
             let playerOneChoice = playerOne.getChoice();
+            if (playerOneChoice === "") {
+                console.log("Game exited");
+                return;
+            }
             while (!gameBoard.isValid(playerOneChoice)) {
                 console.log("Invalid position, try again");
                 playerOneChoice = playerOne.getChoice();
+                if (playerOneChoice === "") {
+                    console.log("Game exited");
+                    return;
+                }
             }
 
             gameBoard.setCircle(playerOneChoice);
             gameBoard.displayBoard();
 
-            if (gameBoard.checkOver()) {
+            if (gameBoard.checkWin()) {
                 console.log(playerOne.getName() + " wins");
-                break;
+                return;
+            }
+            else if (gameBoard.getCount() == 9) {
+                console.log("Match ends in a draw");
+                return;
             }
 
             let playerTwoChoice = playerTwo.getChoice();
+            if (playerTwoChoice === "") {
+                console.log("Game exited");
+                return;
+            }
             while (!gameBoard.isValid(playerTwoChoice)) {
                 console.log("Invalid position, try again");
                 playerTwoChoice = playerTwo.getChoice();
+                if (playerTwoChoice === "") {
+                    console.log("Game exited");
+                    return;
+                }
             }
             gameBoard.setCross(playerTwoChoice);
             gameBoard.displayBoard();
 
-            if (gameBoard.checkOver()) {
+            if (gameBoard.checkWin()) {
                 console.log(playerTwo.getName() + " wins");
-                break;
+                return;
             }
         }
     };
