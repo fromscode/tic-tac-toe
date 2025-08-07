@@ -2,8 +2,6 @@ const START = "-";
 const CROSS = "X";
 const CIRCLE = "O";
 
-console.log("test");
-
 let gameBoard = (function createGameBoard() {
     const board = Array(9).fill(START);
     let count = 0;
@@ -85,6 +83,34 @@ function createPlayer(name) {
     return { getName, getChoice };
 }
 
+
+let domController = (function() {
+    let getCell = (position) => {
+        position = +position;
+        let id = "";
+        switch (position) {
+            case 0 : id = "zero"; break;
+            case 1 : id = "one"; break;
+            case 2 : id = "two"; break;
+            case 3 : id = "three"; break;
+            case 4 : id = "four"; break;
+            case 5 : id = "five"; break;
+            case 6 : id = "six"; break;
+            case 7 : id = "seven"; break;
+            case 8 : id = "eight"; break;
+        }
+        const cell = document.getElementById(id);
+        return cell;
+    }
+
+    let display = (position, mark) => {
+        const cell = getCell(position);
+        cell.textContent = mark;
+    }
+
+    return { display };
+}) ();
+
 let gameController = (function () {
 
     let playerOne;
@@ -128,6 +154,7 @@ let gameController = (function () {
 
             gameBoard.setCircle(playerOneChoice);
             gameBoard.displayBoard();
+            domController.display(playerOneChoice, CIRCLE);
 
             if (gameBoard.checkWin()) {
                 console.log(playerOne.getName() + " wins");
@@ -153,6 +180,7 @@ let gameController = (function () {
             }
             gameBoard.setCross(playerTwoChoice);
             gameBoard.displayBoard();
+            domController.display(playerTwoChoice, CROSS);
 
             if (gameBoard.checkWin()) {
                 console.log(playerTwo.getName() + " wins");

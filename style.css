@@ -1,5 +1,5 @@
 *{
-    color: red;
+    color: black;
     margin: 0;
     padding: 0;
 }
@@ -20,7 +20,12 @@ body {
 }
 
 .cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: lightgray;
+    font-size: 10em;
+    text-align: center;
 }
 
 .cell:hover {
