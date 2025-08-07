@@ -84,20 +84,71 @@ function createPlayer(name) {
 }
 
 
-let domController = (function() {
+let domController = (function () {
+
+    const allCells = document.querySelectorAll(".cell");
+
+    let addELs = () => {
+        allCells.forEach((cell) => {
+            cell.addEventListener('click', markCell);
+        });
+    }
+
+    let markCell = (event) => {
+        const cellId = event.target.id;
+        const position = getPosition(cellId);
+
+        if (gameBoard.isValid(position)) {
+
+            const state = gameController.getState();
+
+            if (state === "O") {
+                event.target.textContent = "O";
+                gameController.setCircle(position);
+            }
+            else if (state === "X") {
+                event.target.textContent = "X";
+                gameController.setCross(position);
+            }
+        }
+
+    }
+
+    let removeELS = () => {
+        allCells.forEach((cell) => {
+            cell.removeEventListener('click', markCell);
+        });
+    }
+
+    let getPosition = (cellId) => {
+        switch (cellId) {
+            case "zero": return 0;
+            case "one": return 1;
+            case "two": return 2;
+            case "two": return 2;
+            case "three": return 3;
+            case "four": return 4;
+            case "five": return 5;
+            case "six": return 6;
+            case "seven": return 7;
+            case "eight": return 8;
+        }
+    }
+
+
     let getCell = (position) => {
         position = +position;
         let id = "";
         switch (position) {
-            case 0 : id = "zero"; break;
-            case 1 : id = "one"; break;
-            case 2 : id = "two"; break;
-            case 3 : id = "three"; break;
-            case 4 : id = "four"; break;
-            case 5 : id = "five"; break;
-            case 6 : id = "six"; break;
-            case 7 : id = "seven"; break;
-            case 8 : id = "eight"; break;
+            case 0: id = "zero"; break;
+            case 1: id = "one"; break;
+            case 2: id = "two"; break;
+            case 3: id = "three"; break;
+            case 4: id = "four"; break;
+            case 5: id = "five"; break;
+            case 6: id = "six"; break;
+            case 7: id = "seven"; break;
+            case 8: id = "eight"; break;
         }
         const cell = document.getElementById(id);
         return cell;
@@ -108,13 +159,16 @@ let domController = (function() {
         cell.textContent = mark;
     }
 
-    return { display };
-}) ();
+    return { display, addELs, removeELS };
+})();
 
 let gameController = (function () {
 
     let playerOne;
     let playerTwo;
+    let state = "O";
+
+    let getState = () => state;
 
     let intializePlayers = () => {
         firstPlayerName = prompt("Enter player 1 name: ");
@@ -134,65 +188,43 @@ let gameController = (function () {
 
     }
 
-    let play = () => {
-        if(!intializePlayers()) return;
+    let setCircle = (position) => {
+        gameBoard.setCircle(position);
         gameBoard.displayBoard();
-        while (true) {
-            let playerOneChoice = playerOne.getChoice();
-            if (playerOneChoice === "") {
-                console.log("Game exited");
-                return;
-            }
-            while (!gameBoard.isValid(playerOneChoice)) {
-                console.log("Invalid position, try again");
-                playerOneChoice = playerOne.getChoice();
-                if (playerOneChoice === "") {
-                    console.log("Game exited");
-                    return;
-                }
-            }
+        checkOver(playerOne);
+        state = "X";
+    }
 
-            gameBoard.setCircle(playerOneChoice);
-            gameBoard.displayBoard();
-            domController.display(playerOneChoice, CIRCLE);
+    let setCross = (position) => {
+        gameBoard.setCross(position);
+        gameBoard.displayBoard();
+        checkOver(playerTwo);
+        state = "O";
+    }
 
-            if (gameBoard.checkWin()) {
-                console.log(playerOne.getName() + " wins");
-                return;
-            }
-            else if (gameBoard.getCount() == 9) {
-                console.log("Match ends in a draw");
-                return;
-            }
+    let checkOver = (player) => {
+        if (gameBoard.checkWin()) {
+            console.log(player.getName() + " wins");
+            domController.removeELS();
+            return;
 
-            let playerTwoChoice = playerTwo.getChoice();
-            if (playerTwoChoice === "") {
-                console.log("Game exited");
-                return;
-            }
-            while (!gameBoard.isValid(playerTwoChoice)) {
-                console.log("Invalid position, try again");
-                playerTwoChoice = playerTwo.getChoice();
-                if (playerTwoChoice === "") {
-                    console.log("Game exited");
-                    return;
-                }
-            }
-            gameBoard.setCross(playerTwoChoice);
-            gameBoard.displayBoard();
-            domController.display(playerTwoChoice, CROSS);
-
-            if (gameBoard.checkWin()) {
-                console.log(playerTwo.getName() + " wins");
-                return;
-            }
         }
+        else if (gameBoard.getCount() == 9) {
+            console.log("Match ends in a draw");
+            domController.removeELS();
+            return;
+        }
+    }
+
+    let play = () => {
+        if (!intializePlayers()) return;
+        gameBoard.displayBoard();
+        domController.addELs();
     };
 
 
 
-    return { play };
+    return { play, getState, setCircle, setCross };
 })();
-
 
 gameController.play();
